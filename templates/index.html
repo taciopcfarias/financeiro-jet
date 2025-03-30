@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Controle Financeiro - Navy Maragogi</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Controle Financeiro - Navy Maragogi</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+header {
+  position: relative;
+  width: 100%;
+  height: 300px; /* altura definida */
+  padding-top: 90px; /* adiciona espaço no topo para mover o conteúdo para baixo */
+  overflow: hidden;
+  background: url("{{ url_for('static', filename='imagens/logo.jpg') }}") no-repeat center center;
+  background-size: cover;
+}
+
+    /* Se quiser que o conteúdo do header fique visível, pode adicionar: */
+    header h1 {
+      color: #fff;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+      padding: 10 0px;
+    }
+  </style>
+  <style>
+    body {
+      background-color: #f5eee1;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    
+  </header>
+  
+  <div class="container mt-4">
+    <!-- Resto do conteúdo -->
+  </div>
+  
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+  <div class="container">
+    <h1 class="mb-4">Navy Maragogi - Financeiro</h1>
+    
+    <!-- Abas de navegação -->
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="lancamentos-tab" data-bs-toggle="tab" data-bs-target="#lancamentos" type="button" role="tab" aria-controls="lancamentos" aria-selected="true">Lançamentos</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="calendario-tab" data-bs-toggle="tab" data-bs-target="#calendario" type="button" role="tab" aria-controls="calendario" aria-selected="false">Calendário/Período</button>
+      </li>
+    </ul>
+    
+    <div class="tab-content" id="myTabContent">
+      <!-- Aba Lançamentos -->
+      <div class="tab-pane fade show active" id="lancamentos" role="tabpanel" aria-labelledby="lancamentos-tab">
+        <div class="mt-4">
+          <!-- Formulário para definir a data do dia -->
+          <form method="POST" class="mb-3">
+            <div class="row g-2 align-items-center">
+              <div class="col-auto">
+                <label for="data_dia" class="col-form-label">Data do Dia:</label>
+              </div>
+              <div class="col-auto">
+                <input type="date" class="form-control" id="data_dia" name="data_dia" value="{{ data_dia }}" required>
+              </div>
+              <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Definir Data</button>
+              </div>
+            </div>
+          </form>
+          
+          <!-- Formulário para lançar um novo aluguel para o dia selecionado -->
+          <form method="POST" class="mb-4">
+            <p>Data do Lançamento: <strong>{{ data_dia }}</strong></p>
+            <div class="row g-2">
+              <div class="col-md-4">
+                <label for="valor" class="form-label">Valor do Aluguel:</label>
+                <input type="number" step="0.01" class="form-control" id="valor" name="valor" required>
+              </div>
+              <div class="col-md-4">
+                <label for="metodo_pagamento" class="form-label">Método de Pagamento:</label>
+                <select id="metodo_pagamento" name="metodo_pagamento" class="form-select" required>
+                  <option value="PIX">PIX</option>
+                  <option value="Cartão">Cartão</option>
+                  <option value="Dinheiro">Dinheiro</option>
+                </select>
+              </div>
+              <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-success">Lançar Aluguel</button>
+              </div>
+            </div>
+          </form>
+          
+          <!-- Exibição dos totais -->
+          <div class="mb-3">
+            <h2>Totais</h2>
+            <p><strong>Total do Dia: R$ {{ total_geral }}</strong></p>
+            <p><strong>Total do Mês: R$ {{ total_mensal }}</strong></p>
+            <p><strong>Caixa (Espécie): R$ {{ total_dinheiro }}</strong></p>
+          </div>
+          
+          <!-- Listagem dos lançamentos do dia -->
+          <h2>Aluguéis Lançados em {{ data_dia }}</h2>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+               
+                <th>Valor</th>
+                <th>Método de Pagamento</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for aluguel in alugueis %}
+              <tr>
+               
+                <td>{{ aluguel.valor }}</td>
+                <td>{{ aluguel.metodo_pagamento }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          
+          <!-- Exibição dos totais por método de pagamento -->
+          <h2>Totais por Método de Pagamento</h2>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Método de Pagamento</th>
+                <th>Total</th>
+                <th>Quantidade de Lançamentos</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for total in totais %}
+              <tr>
+                <td>{{ total.metodo_pagamento }}</td>
+                <td>{{ total.total }}</td>
+                <td>{{ total.qtd }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Aba Calendário/Período -->
+      <div class="tab-pane fade" id="calendario" role="tabpanel" aria-labelledby="calendario-tab">
+        <div class="mt-4">
+          <h2>Filtrar por Período</h2>
+          <!-- Formulário para filtrar por período -->
+          <form method="GET" action="/filtrar" class="mb-4">
+            <div class="row g-2">
+              <div class="col-md-4">
+                <label for="data_inicial" class="form-label">Data Inicial:</label>
+                <input type="date" class="form-control" id="data_inicial" name="data_inicial" required>
+              </div>
+              <div class="col-md-4">
+                <label for="data_final" class="form-label">Data Final:</label>
+                <input type="date" class="form-control" id="data_final" name="data_final" required>
+              </div>
+              <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary">Filtrar</button>
+              </div>
+            </div>
+          </form>
+          <!-- Aqui você pode exibir os resultados do filtro em uma tabela ou componente de calendário -->
+          <div class="mt-4">
+            <!-- Exemplo de tabela para resultados filtrados (implemente a rota /filtrar no back-end) -->
+            <!--
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Data</th>
+                  <th>Valor</th>
+                  <th>Método de Pagamento</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for registro in registros_filtrados %}
+                <tr>
+                  <td>{{ registro.id }}</td>
+                  <td>{{ registro.data }}</td>
+                  <td>{{ registro.valor }}</td>
+                  <td>{{ registro.metodo_pagamento }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            -->
+            <p>Aqui serão exibidos os resultados filtrados.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Bootstrap JS (inclui Popper) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+
+    
